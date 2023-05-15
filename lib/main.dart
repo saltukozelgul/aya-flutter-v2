@@ -18,11 +18,8 @@ void main() async {
   runApp(const MyApp());
 }
 
-
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
- 
 
   // Write build widget againg and wrap with StreamProvider
   @override

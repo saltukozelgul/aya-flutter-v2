@@ -27,7 +27,6 @@ class _SignInState extends State<SignIn> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 25.0),
         child: Column(
@@ -48,95 +47,93 @@ class _SignInState extends State<SignIn> {
 
   ElevatedButton _signInButton(BuildContext context) {
     return ElevatedButton(
-            onPressed: () async {
-              // Get the user's phone number from the TextFormField widget.
-              if (number.phoneNumber!.length != 13) {
-                print('Lütfen geçerli bir telefon numarası giriniz.');
-                return;
-              }
-            
-              final String phoneNumber = number.phoneNumber!;
+      onPressed: () async {
+        // Get the user's phone number from the TextFormField widget.
+        if (number.phoneNumber!.length != 13) {
+          print('Lütfen geçerli bir telefon numarası giriniz.');
+          return;
+        }
+        final String phoneNumber = number.phoneNumber!;
 
-              // Send the code to the user's phone.
-              await _auth.verifyPhoneNumber(
-                phoneNumber: phoneNumber,
-                //timeout: const Duration(seconds: 60),
-                verificationCompleted:
-                    (PhoneAuthCredential credential) async {
-                  // ANDROID ONLY!
-                  // Sign the user in (or link) with the auto-generated credential
-                  await _auth.signInWithCredential(credential);
-                },
-                verificationFailed: (FirebaseAuthException e) {
-                  if (e.code == 'invalid-phone-number') {
-                    print('Numara geçersiz.');
+        // Send the code to the user's phone.
+        await _auth.verifyPhoneNumber(
+          phoneNumber: phoneNumber,
+          //timeout: const Duration(seconds: 60),
+          verificationCompleted: (PhoneAuthCredential credential) async {
+            // ANDROID ONLY!
+            // Sign the user in (or link) with the auto-generated credential
+            await _auth.signInWithCredential(credential);
+          },
+          verificationFailed: (FirebaseAuthException e) {
+            if (e.code == 'invalid-phone-number') {
+              print('Numara geçersiz.');
+            }
+          },
+          codeSent: (String verificationId, int? resendToken) async {
+            this.verificationId = verificationId;
+          },
+          codeAutoRetrievalTimeout: (String verificationId) {
+            // Auto-resolution timed out...
+          },
+        );
+
+        // Show the dialog.
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Doğrulama Kodu Giriniz'),
+              content: TextFormField(
+                controller: _smsController,
+                decoration: const InputDecoration(
+                  labelText: 'Doğrulama Kodu',
+                ),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Lütfen doğrulama kodunu giriniz.';
                   }
+                  return null;
                 },
-                codeSent: (String verificationId, int? resendToken) async {
-                  this.verificationId = verificationId;
-                },
-                codeAutoRetrievalTimeout: (String verificationId) {
-                  // Auto-resolution timed out...
-                },
-              );
-
-              // Show the dialog.
-              // ignore: use_build_context_synchronously
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text('Doğrulama Kodu Giriniz'),
-                    content: TextFormField(
-                      controller: _smsController,
-                      decoration: const InputDecoration(
-                        labelText: 'Doğrulama Kodu',
-                      ),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Lütfen doğrulama kodunu giriniz.';
-                        }
-                        return null;
-                      },
-                    ),
-                    actions: [
-                      ElevatedButton(
-                        onPressed: () async {
-                          // Get the verification code from the dialog.
-                          final String smsCode = _smsController.text;
-
-                          // Create a PhoneAuthCredential with the code
-                          PhoneAuthCredential credential =
-                              PhoneAuthProvider.credential(
-                            verificationId: verificationId ?? '',
-                            smsCode: smsCode,
-                          );
-
-                          // Sign the user in (or link) with the credential
-                          await _auth.signInWithCredential(credential);
-
-                          // close the dialog
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text('Giriş Yap'),
-                      ),
-                    ],
-                  );
-                },
-              );
-            }, 
-            style: ElevatedButton.styleFrom(
-              // border radius
-              shadowColor: AppColors.primary,
-              elevation: 10,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
               ),
-              // Make wide %50
-              minimumSize: const Size(double.infinity, 50),
-            ),
-            child: const Text('GİRİŞ YAP')  ,
-          );
+              actions: [
+                ElevatedButton(
+                  onPressed: () async {
+                    // Get the verification code from the dialog.
+                    final String smsCode = _smsController.text;
+
+                    // Create a PhoneAuthCredential with the code
+                    PhoneAuthCredential credential =
+                        PhoneAuthProvider.credential(
+                      verificationId: verificationId ?? '',
+                      smsCode: smsCode,
+                    );
+
+                    // Sign the user in (or link) with the credential
+                    await _auth.signInWithCredential(credential);
+
+                    // close the dialog
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Giriş Yap'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        // border radius
+        shadowColor: AppColors.primary,
+        elevation: 10,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        // Make wide %50
+        minimumSize: const Size(double.infinity, 50),
+      ),
+      child: const Text('GİRİŞ YAP'),
+    );
   }
 
   Widget _phoneInput() {
@@ -151,33 +148,33 @@ class _SignInState extends State<SignIn> {
       ),
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: InternationalPhoneNumberInput(
-              countries: const ['TR', 'SY'],
-              onInputChanged: (PhoneNumber number) {
-                if (number.phoneNumber!.length == 13) {
-                  this.number = number;
-                }
-              },
-              selectorConfig: const SelectorConfig(
-                selectorType: PhoneInputSelectorType.DIALOG,
-              ),
-              ignoreBlank: true,
-              hintText: "Telefon Numarası",
-              errorMessage: "Lütfen geçerli bir telefon numarası giriniz.",
-              autoValidateMode: AutovalidateMode.disabled,
-              selectorTextStyle: const TextStyle(color: Colors.black),
-              initialValue: number,
-              textFieldController: _phoneNumberController,
-              formatInput: true,
-              spaceBetweenSelectorAndTextField: 0,
-              keyboardType:
-                  const TextInputType.numberWithOptions(signed: true, decimal: true),
-              inputBorder: OutlineInputBorder(
-                borderSide: BorderSide.none,
-              ),
-              onSaved: (PhoneNumber number) {
-                print('On Saved: $number');
-              },
-            ),
+        countries: const ['TR', 'SY'],
+        onInputChanged: (PhoneNumber number) {
+          if (number.phoneNumber!.length == 13) {
+            this.number = number;
+          }
+        },
+        selectorConfig: const SelectorConfig(
+          selectorType: PhoneInputSelectorType.DIALOG,
+        ),
+        ignoreBlank: true,
+        hintText: "Telefon Numarası",
+        errorMessage: "Lütfen geçerli bir telefon numarası giriniz.",
+        autoValidateMode: AutovalidateMode.disabled,
+        selectorTextStyle: const TextStyle(color: Colors.black),
+        initialValue: number,
+        textFieldController: _phoneNumberController,
+        formatInput: true,
+        spaceBetweenSelectorAndTextField: 0,
+        keyboardType:
+            const TextInputType.numberWithOptions(signed: true, decimal: true),
+        inputBorder: OutlineInputBorder(
+          borderSide: BorderSide.none,
+        ),
+        onSaved: (PhoneNumber number) {
+          print('On Saved: $number');
+        },
+      ),
     );
   }
 }
