@@ -1,5 +1,6 @@
 import 'package:aya_flutter_v2/screens/wrapper.dart';
 import 'package:aya_flutter_v2/services/auth.dart';
+import 'package:aya_flutter_v2/themes/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -29,8 +30,9 @@ class MyApp extends StatelessWidget {
     return StreamProvider<User?>.value(
       initialData: null,
       value: AuthService().user,
-      child: const MaterialApp(
-        home: Wrapper(),
+      child: MaterialApp(
+        theme: AppTheme.lightTheme,
+        home: const Wrapper(),
       ),
     );
   }
