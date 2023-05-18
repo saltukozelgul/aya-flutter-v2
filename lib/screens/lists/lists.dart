@@ -11,16 +11,8 @@ class ListPage extends StatefulWidget {
 class _ListPageState extends State<ListPage> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Colors.transparent,
-      floatingActionButton: FloatingActionButton(
-        onPressed: null,
-        backgroundColor: AppColors.primary,
-        child: Icon(Icons.add),
-      ),
-      body: Center(
-        child: Text("List Page"),
-      ),
+    return const Center(
+      child: Text("List Page"),
     );
   }
 }

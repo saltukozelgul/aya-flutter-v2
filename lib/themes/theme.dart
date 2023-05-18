@@ -21,7 +21,11 @@ class AppTheme {
       ),
     ),
 
+    colorScheme: const ColorScheme.light().copyWith(
+      secondary: AppColors.secondary,
+    ),
     primaryColor: AppColors.primary,
+
     // ElevatedButton Style
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
