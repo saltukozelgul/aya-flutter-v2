@@ -1,5 +1,4 @@
 import 'package:aya_flutter_v2/constants/colors.dart';
-import 'package:aya_flutter_v2/services/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
