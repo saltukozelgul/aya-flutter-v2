@@ -25,32 +25,39 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.brown[50],
-      appBar: AppBar(
-        title: _currentIndex == 0
-            ? const Text('İlanlar')
+      body: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            SliverAppBar(
+              title: _currentIndex == 0
+                  ? const Text('İlanlar')
+                  : _currentIndex == 1
+                      ? const Text('Profil')
+                      : const Text('Anasayfa'),
+              floating: true,
+              centerTitle: true,
+              elevation: 5,
+              actions: <Widget>[
+                IconButton(
+                  onPressed: _auth.signOut,
+                  icon: const Icon(Icons.logout),
+                ),
+              ],
+            ),
+          ];
+        },
+        body: _currentIndex == 0
+            ? const Center(
+                child: ListPage(),
+              )
             : _currentIndex == 1
-                ? const Text('Profil')
-                : const Text('Anasayfa'),
-        centerTitle: true,
-        backgroundColor: AppColors.primary,
-        elevation: 5.0,
-        actions: <Widget>[
-          IconButton(
-            onPressed: _auth.signOut,
-            icon: const Icon(Icons.logout),
-          ),
-        ],
+                ? const Center(
+                    child: ProfilePage(),
+                  )
+                : _homeContent(),
       ),
-      body: _currentIndex == 0
-          ? const Center(
-              child: ListPage(),
-            )
-          : _currentIndex == 1
-              ? const Center(
-                  child: ProfilePage(),
-                )
-              : _homeContent(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           setState(() {
@@ -83,6 +90,7 @@ class _HomeState extends State<Home> {
   }
 
   Widget _homeContent() => Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.transparent,
         body: SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -100,6 +108,11 @@ class _HomeState extends State<Home> {
                       width: MediaQuery.of(context).size.width * 0.9,
                       child: TextField(
                         decoration: InputDecoration(
+                          focusedBorder: const OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                            borderSide:
+                                BorderSide(color: AppColors.primary, width: 2),
+                          ),
                           hintText: "Arama",
                           hintStyle: Theme.of(context)
                               .textTheme
@@ -149,20 +162,24 @@ class _HomeState extends State<Home> {
                   ),
                 ),
               ),
-              ListView.builder(
-                //physics sayesinde single child scroll view ile oluşan aşağı inememe problemi çözüldü
-                physics: const NeverScrollableScrollPhysics(),
-                //ilanlar listesi
-                shrinkWrap: true,
-                itemBuilder: (context, index) => _Ilan(
-                    context,
-                    "Seda",
-                    "Battaniye lazim",
-                    "Merkez Ankara",
-                    39.925533,
-                    32.866287,
-                    index),
-                itemCount: 5,
+              MediaQuery.removePadding(
+                context: context,
+                removeTop: true,
+                child: ListView.builder(
+                  //physics sayesinde single child scroll view ile oluşan aşağı inememe problemi çözüldü
+                  physics: const NeverScrollableScrollPhysics(),
+                  //ilanlar listesi
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) => _Ilan(
+                      context,
+                      "Seda",
+                      "Battaniye lazim",
+                      "Merkez Ankara",
+                      39.925533,
+                      32.866287,
+                      index),
+                  itemCount: 5,
+                ),
               ),
             ],
           ),

@@ -22,7 +22,7 @@ class AppTheme {
     ),
 
     colorScheme: const ColorScheme.light().copyWith(
-      secondary: AppColors.secondary,
+      secondary: AppColors.primary,
     ),
     primaryColor: AppColors.primary,
 
