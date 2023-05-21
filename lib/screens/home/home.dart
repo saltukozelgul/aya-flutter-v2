@@ -90,12 +90,10 @@ class _HomeState extends State<Home> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(left: 20.0, right: 20, top: 10),
-              ),
               Padding(
-                padding: const EdgeInsets.only(left: 20.0, right: 20, top: 10),
+                padding: const EdgeInsets.only(left: 20.0, right: 15, top: 10),
                 child: Row(
+                  mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     SizedBox(
