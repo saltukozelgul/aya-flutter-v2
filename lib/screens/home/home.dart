@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:aya_flutter_v2/constants/colors.dart';
 import 'package:aya_flutter_v2/extensions/strings.dart';
 import 'package:aya_flutter_v2/screens/lists/lists.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
