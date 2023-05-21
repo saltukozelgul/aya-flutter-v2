@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:aya_flutter_v2/constants/colors.dart';
 import 'package:aya_flutter_v2/extensions/strings.dart';
+import 'package:aya_flutter_v2/screens/listing/listing.dart';
 import 'package:aya_flutter_v2/screens/lists/lists.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -195,6 +196,7 @@ class _HomeState extends State<Home> {
                   itemBuilder: (context, index) => _Ilan(
                       context,
                       documents[index]["ownerUsername"],
+                      "10-10-2021",
                       documents[index]["description"],
                       documents[index]["location"],
                       documents[index]["coordinates"].latitude,
@@ -213,26 +215,34 @@ class _HomeState extends State<Home> {
         ),
       );
 
-  Container _Ilan(BuildContext context, String user, String desc, String loc,
-          double lat, double lng, int index) =>
-      Container(
-        height: 300,
-        margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
-        child: Card(
-          color: AppColors.white,
-          elevation: 7,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+  InkWell _Ilan(BuildContext context, String user, String date, String desc,
+          String loc, double lat, double lng, int index) =>
+      InkWell(
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const Listing(),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _ilanUsername(user, context),
-              _ilanDesc(desc, context),
-              _ilanLocationAndTags(loc, context),
-              _ilanMap(context, lat, lng),
-            ],
+        ),
+        child: Container(
+          height: 300,
+          margin: const EdgeInsets.only(left: 20, right: 20, top: 10),
+          child: Card(
+            color: AppColors.white,
+            elevation: 7,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _ilanUsername(user, date, context),
+                _ilanDesc(desc, context),
+                _ilanLocationAndTags(loc, context),
+                _ilanMap(context, lat, lng),
+              ],
+            ),
           ),
         ),
       );
@@ -324,16 +334,39 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Padding _ilanUsername(String user, BuildContext context) {
-    return Padding(
-      //ilan sahibi kısmı
-      padding:
-          const EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 5),
-      child: Text(user,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontSize: 20,
-              color: AppColors.disable,
-              fontWeight: FontWeight.bold)),
+  Row _ilanUsername(String user, String date, BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Row(children: [
+            const Padding(
+                padding: EdgeInsets.only(top: 15, left: 15),
+                child: Icon(Icons.person, color: AppColors.primary, size: 25)),
+            Padding(
+              padding: const EdgeInsets.only(top: 15, left: 15),
+              child: Text(user,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 18,
+                        color: AppColors.disable,
+                        fontWeight: FontWeight.bold,
+                      )),
+            ),
+          ]),
+        ),
+        Expanded(
+          child: Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 15, right: 15),
+              child: Text(date,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontSize: 15,
+                        color: AppColors.disable,
+                      )),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
