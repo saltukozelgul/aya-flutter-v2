@@ -4,6 +4,7 @@ import 'package:aya_flutter_v2/constants/colors.dart';
 import 'package:aya_flutter_v2/extensions/strings.dart';
 import 'package:aya_flutter_v2/screens/lists/lists.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import '../../services/auth.dart';
@@ -21,42 +22,64 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final AuthService _auth = AuthService();
   int _currentIndex = 0;
+  Stream<QuerySnapshot<Object?>>? collectionStream = FirebaseFirestore.instance
+      .collection("listings")
+      .snapshots(includeMetadataChanges: true);
+  late List<DocumentSnapshot> documents;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.brown[50],
-      body: NestedScrollView(
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            SliverAppBar(
-              title: _currentIndex == 0
-                  ? const Text('İlanlar')
-                  : _currentIndex == 1
-                      ? const Text('Profil')
-                      : const Text('Anasayfa'),
-              floating: true,
-              centerTitle: true,
-              elevation: 5,
-              actions: <Widget>[
-                IconButton(
-                  onPressed: _auth.signOut,
-                  icon: const Icon(Icons.logout),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: collectionStream,
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          // Data from Firestore is available
+          documents = snapshot.data!.docs;
+          return NestedScrollView(
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) {
+              return <Widget>[
+                SliverAppBar(
+                  title: _currentIndex == 0
+                      ? const Text('İlanlar')
+                      : _currentIndex == 1
+                          ? const Text('Profil')
+                          : const Text('Anasayfa'),
+                  floating: true,
+                  centerTitle: true,
+                  elevation: 5,
+                  actions: <Widget>[
+                    IconButton(
+                      onPressed: _auth.signOut,
+                      icon: const Icon(Icons.logout),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ];
-        },
-        body: _currentIndex == 0
-            ? const Center(
-                child: ListPage(),
-              )
-            : _currentIndex == 1
+              ];
+            },
+            body: _currentIndex == 0
                 ? const Center(
-                    child: ProfilePage(),
+                    child: ListPage(),
                   )
-                : _homeContent(),
+                : _currentIndex == 1
+                    ? const Center(
+                        child: ProfilePage(),
+                      )
+                    : _homeContent(),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -172,13 +195,13 @@ class _HomeState extends State<Home> {
                   shrinkWrap: true,
                   itemBuilder: (context, index) => _Ilan(
                       context,
-                      "Seda",
-                      "Battaniye lazim",
-                      "Merkez Ankara",
-                      39.925533,
-                      32.866287,
+                      documents[index]["ownerUsername"],
+                      documents[index]["description"],
+                      documents[index]["location"],
+                      documents[index]["coordinates"].latitude,
+                      documents[index]["coordinates"].longitude,
                       index),
-                  itemCount: 5,
+                  itemCount: documents.length,
                 ),
               ),
             ],
