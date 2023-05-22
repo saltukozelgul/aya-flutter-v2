@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:map/map.dart';
 import '../../constants/colors.dart';
 import 'package:latlng/latlng.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Listing extends StatefulWidget {
   Listing({Key? key, required this.id}) : super(key: key);
@@ -107,7 +108,7 @@ class _ListingState extends State<Listing> {
   Container _ilanDesc(String desc, BuildContext context) {
     return Container(
       //ilan açıklaması kısmı
-      height: 200,
+      height: 150,
       padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15),
       child: Text(
         desc,
@@ -152,18 +153,23 @@ class _ListingState extends State<Listing> {
       //ilan sahibi kısmı
       padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          IconButton(
-              icon: const Icon(Icons.wechat_sharp, color: AppColors.primary),
-              onPressed: () {}),
-          IconButton(
-            icon: const Icon(Icons.call, color: AppColors.primary),
-            onPressed: () {},
+          Container(
+            margin: const EdgeInsets.only(right: 16.0, bottom: 10),
+            child: FloatingActionButton(
+              child: const FaIcon(FontAwesomeIcons.telegram,
+                  color: AppColors.white, size: 30),
+              onPressed: () {},
+            ),
           ),
-          IconButton(
-            icon: const Icon(Icons.mail, color: AppColors.primary),
-            onPressed: () {},
+          Container(
+            margin: const EdgeInsets.only(left: 16.0, bottom: 10),
+            child: FloatingActionButton(
+              child: const FaIcon(FontAwesomeIcons.whatsapp,
+                  color: AppColors.white, size: 30),
+              onPressed: () {},
+            ),
           ),
         ],
       ),
