@@ -19,6 +19,7 @@ class Listing extends StatefulWidget {
 class _ListingState extends State<Listing> {
   ListingsModel? _listingsModel;
   bool isLoaded = false;
+  bool isFavorite = false;
   ListingsService _service = ListingsService();
 
   @override
@@ -41,6 +42,18 @@ class _ListingState extends State<Listing> {
       appBar: AppBar(
         title: const Text('İlan'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                isFavorite = !isFavorite;
+              });
+            },
+            icon: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+            ),
+          ),
+        ],
       ),
       body: isLoaded
           ? _Ilan(
