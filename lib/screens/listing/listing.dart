@@ -104,9 +104,10 @@ class _ListingState extends State<Listing> {
     );
   }
 
-  Padding _ilanDesc(String desc, BuildContext context) {
-    return Padding(
+  Container _ilanDesc(String desc, BuildContext context) {
+    return Container(
       //ilan açıklaması kısmı
+      height: 200,
       padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15),
       child: Text(
         desc,
