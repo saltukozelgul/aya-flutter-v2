@@ -72,7 +72,7 @@ class _HomeState extends State<Home> {
               return <Widget>[
                 SliverAppBar(
                   title: _currentIndex == 0
-                      ? const Text('İlanlar')
+                      ? const Text('Benim İlanlarım')
                       : _currentIndex == 1
                           ? const Text('Profil')
                           : const Text('Anasayfa'),

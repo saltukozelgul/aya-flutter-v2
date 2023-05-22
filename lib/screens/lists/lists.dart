@@ -1,7 +1,10 @@
 import 'dart:math';
 
 import 'package:aya_flutter_v2/constants/colors.dart';
+import 'package:aya_flutter_v2/extensions/strings.dart';
 import 'package:aya_flutter_v2/screens/listing/listing.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:map/map.dart';
 import 'package:latlng/latlng.dart';
@@ -14,6 +17,31 @@ class ListPage extends StatefulWidget {
 }
 
 class _ListPageState extends State<ListPage> {
+  var documents = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    // get document from listing collection that has user reference is equal to active auth user reference
+
+    //FierebaseAuth active user Firestore refernce
+    var userRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid);
+
+    FirebaseFirestore.instance
+        .collection('listings')
+        .where('user', isEqualTo: userRef)
+        .get()
+        .then((value) {
+      setState(() {
+        documents = value.docs;
+        print(documents);
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
@@ -36,13 +64,20 @@ class _ListPageState extends State<ListPage> {
               shrinkWrap: true,
               itemBuilder: (context, index) => _Ilan(
                   context,
-                  "Seda Nur",
-                  "$formattedDate $formattedTime",
-                  "Standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make but also the leap ntially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing tandard dummy text ever since the 1500s,",
-                  "İstanbul",
-                  ["wp", "telegram"],
-                  0),
-              itemCount: 8,
+                  documents[index]['ownerUsername'],
+                  DateTime.fromMicrosecondsSinceEpoch(documents[index]
+                              ["creationTime"]
+                          .microsecondsSinceEpoch)
+                      .toString()
+                      .trFormattedDate(),
+                  documents[index]["description"],
+                  documents[index]["location"],
+                  documents[index]["tags"].cast<String>(),
+                  documents[index]["coordinates"].latitude,
+                  documents[index]["coordinates"].longitude,
+                  documents[index].id,
+                  index),
+              itemCount: documents.length,
             ),
           ],
         ),
@@ -50,14 +85,23 @@ class _ListPageState extends State<ListPage> {
     );
   }
 
-  InkWell _Ilan(BuildContext context, String user, String date, String desc,
-          String loc, iletisim, int index) =>
+  InkWell _Ilan(
+          BuildContext context,
+          String user,
+          String date,
+          String desc,
+          String loc,
+          List<String> tags,
+          double lat,
+          double long,
+          String id,
+          int index) =>
       InkWell(
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => Listing(
-              id: 'sekam',
+              id: id,
             ),
           ),
         ),
@@ -77,7 +121,7 @@ class _ListPageState extends State<ListPage> {
                 _ilanUsername(user, date, context),
                 _ilanDesc(desc, context),
                 _ilanLocationAndTags(loc, context),
-                _ilanMap(context, 41.015137, 28.979530),
+                _ilanMap(context, lat, long),
               ],
             ),
           ),
