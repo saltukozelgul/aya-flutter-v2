@@ -44,7 +44,7 @@ class _ListingState extends State<Listing> {
       body: isLoaded
           ? _Ilan(
               context,
-              _listingsModel!.ownerUsername,
+              _listingsModel!.user.displayName,
               _listingsModel!.creationTime.toString().trFormattedDate(),
               _listingsModel!.description,
               _listingsModel!.location,

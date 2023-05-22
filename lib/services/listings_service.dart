@@ -29,8 +29,35 @@ class ListingsService {
   }
 
   // Create listing
+  // coordinates is GeoPoint
+  // creationTime is DateTime
+  // description is String
+  // location is String
+  // tags is List<String>
+  // user is DocumentReference
   Future createListing(
-      String title, String description, String price, String image) async {}
+      String ownerUsername,
+      GeoPoint coordinates,
+      DateTime creationTime,
+      String description,
+      String location,
+      List<String> tags,
+      DocumentReference user) async {
+    try {
+      await listingsCollection.add({
+        'ownerUsername': ownerUsername,
+        'coordinates': coordinates,
+        'creationTime': creationTime,
+        'description': description,
+        'location': location,
+        'tags': tags,
+        'user': user
+      });
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
 
   // Update listing
   Future updateListing(String id, String title, String description,

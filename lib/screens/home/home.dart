@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:aya_flutter_v2/constants/colors.dart';
 import 'package:aya_flutter_v2/extensions/strings.dart';
+import 'package:aya_flutter_v2/screens/home/new_listing.dart';
 import 'package:aya_flutter_v2/screens/listing/listing.dart';
 import 'package:aya_flutter_v2/screens/lists/lists.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,10 +23,13 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final AuthService _auth = AuthService();
   int _currentIndex = 0;
+  bool firstTime = false;
   Stream<QuerySnapshot<Object?>>? collectionStream = FirebaseFirestore.instance
       .collection("listings")
       .snapshots(includeMetadataChanges: true);
-  late List<DocumentSnapshot> documents;
+  late List<DocumentSnapshot> documents = [];
+  late List<DocumentSnapshot> filteredDocuments = [];
+  TextEditingController _searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +51,21 @@ class _HomeState extends State<Home> {
           }
           // Data from Firestore is available
           documents = snapshot.data!.docs;
-          print(documents[0].id);
+          if (!firstTime) {
+            filteredDocuments = documents;
+            firstTime = true;
+          }
+          if (_searchController.text.isEmpty) {
+            filteredDocuments = documents;
+          } else {
+            filteredDocuments = documents
+                .where((element) => element
+                    .get('description')
+                    .toString()
+                    .toLowerCase()
+                    .contains(_searchController.text.toLowerCase()))
+                .toList();
+          }
           return NestedScrollView(
             headerSliverBuilder:
                 (BuildContext context, bool innerBoxIsScrolled) {
@@ -131,6 +149,7 @@ class _HomeState extends State<Home> {
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.9,
                       child: TextField(
+                        controller: _searchController,
                         decoration: InputDecoration(
                           focusedBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -147,7 +166,7 @@ class _HomeState extends State<Home> {
                                   fontWeight: FontWeight.w400,
                                   fontStyle: FontStyle.italic),
                           suffixIcon: IconButton(
-                            onPressed: () => print("arama"),
+                            onPressed: () {},
                             icon: const Icon(
                               Icons.search,
                               color: AppColors.primary,
@@ -194,26 +213,33 @@ class _HomeState extends State<Home> {
                   physics: const NeverScrollableScrollPhysics(),
                   //ilanlar listesi
                   shrinkWrap: true,
-                  itemBuilder: (context, index) => _Ilan(
-                      context,
-                      documents[index]["ownerUsername"],
-                      "10-10-2021",
-                      documents[index]["description"],
-                      documents[index]["location"],
-                      documents[index]["coordinates"].latitude,
-                      documents[index]["coordinates"].longitude,
-                      documents[index].id,
-                      index),
-                  itemCount: documents.length,
+                  itemBuilder: (context, index) {
+                    return _Ilan(
+                        context,
+                        filteredDocuments[index]["ownerUsername"],
+                        DateTime.fromMicrosecondsSinceEpoch(
+                                filteredDocuments[index]["creationTime"]
+                                    .microsecondsSinceEpoch)
+                            .toString()
+                            .trFormattedDate(),
+                        filteredDocuments[index]["description"],
+                        filteredDocuments[index]["location"],
+                        filteredDocuments[index]["coordinates"].latitude,
+                        filteredDocuments[index]["coordinates"].longitude,
+                        filteredDocuments[index].id,
+                        index);
+                  },
+                  itemCount: filteredDocuments.length,
                 ),
               ),
             ],
           ),
         ),
-        floatingActionButton: const FloatingActionButton(
-          onPressed: null,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => Navigator.push(
+              context, MaterialPageRoute(builder: (context) => NewListing())),
           backgroundColor: AppColors.primary,
-          child: Icon(Icons.add, color: Colors.white),
+          child: const Icon(Icons.add, color: Colors.white),
         ),
       );
 
