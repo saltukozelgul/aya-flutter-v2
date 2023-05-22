@@ -47,6 +47,7 @@ class _HomeState extends State<Home> {
           }
           // Data from Firestore is available
           documents = snapshot.data!.docs;
+          print(documents[0].id);
           return NestedScrollView(
             headerSliverBuilder:
                 (BuildContext context, bool innerBoxIsScrolled) {
@@ -201,6 +202,7 @@ class _HomeState extends State<Home> {
                       documents[index]["location"],
                       documents[index]["coordinates"].latitude,
                       documents[index]["coordinates"].longitude,
+                      documents[index].id,
                       index),
                   itemCount: documents.length,
                 ),
@@ -216,12 +218,14 @@ class _HomeState extends State<Home> {
       );
 
   InkWell _Ilan(BuildContext context, String user, String date, String desc,
-          String loc, double lat, double lng, int index) =>
+          String loc, double lat, double lng, String id, int index) =>
       InkWell(
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const Listing(),
+            builder: (context) => Listing(
+              id: id,
+            ),
           ),
         ),
         child: Container(

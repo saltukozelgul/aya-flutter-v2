@@ -1,56 +1,57 @@
 import 'dart:math';
+import 'package:aya_flutter_v2/screens/models/listings_model.dart';
+import 'package:aya_flutter_v2/services/listings_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:map/map.dart';
 import '../../constants/colors.dart';
 import 'package:latlng/latlng.dart';
 
 class Listing extends StatefulWidget {
-  const Listing({super.key});
-
+  Listing({Key? key, required this.id}) : super(key: key);
+  final String id;
   @override
-  State<Listing> createState() => _ListingState();
+  _ListingState createState() => _ListingState();
 }
 
 class _ListingState extends State<Listing> {
-  String? id;
+  ListingsModel? _listingsModel;
+  bool isLoaded = false;
+  ListingsService _service = ListingsService();
 
-  // final Map<dynamic, dynamic> data = {
-  //   'id': ' ',
-  //   'name': ' ',
-  //   'decs': ' ',
-  //   'loc': ' ',
-  //   'phone': ' ',
-  //   'tags': [],
-  //   'com': [], //iletisim adresleri
-  // };
+  @override
+  void initState() {
+    super.initState();
+
+    _service.getListingById(widget.id).then((value) {
+      setState(() {
+        _listingsModel = ListingsModel.fromMap(value);
+        isLoaded = true;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    DateTime now = DateTime.now();
-    String formattedDate = "${now.day}-${now.month}-${now.year}";
-    String formattedTime = "${now.hour}:${now.minute}";
-
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.brown[50],
-      body: Column(
-        children: [
-          AppBar(
-            title: const Text('İlan'),
-            centerTitle: true,
-          ),
-          _Ilan(
-              context,
-              "Seda Nur Taşkan",
-              "$formattedDate $formattedTime",
-              "Standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make but also the leap ntially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing tandard dummy text ever since the 1500s,",
-              "İstanbul",
-              41.015137,
-              28.979530,
-              ["wp", "telegram"],
-              0),
-        ],
+      appBar: AppBar(
+        title: const Text('İlan'),
+        centerTitle: true,
       ),
+      body: isLoaded
+          ? _Ilan(
+              context,
+              _listingsModel!.ownerUsername,
+              "Tarih",
+              _listingsModel!.description,
+              _listingsModel!.location,
+              _listingsModel!.coordinates.latitude,
+              _listingsModel!.coordinates.longitude,
+              ["wp", "telegram"],
+              0)
+          : const Center(child: CircularProgressIndicator()),
     );
   }
 

@@ -56,7 +56,9 @@ class _ListPageState extends State<ListPage> {
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const Listing(),
+            builder: (context) => Listing(
+              id: 'sekam',
+            ),
           ),
         ),
         child: Container(
