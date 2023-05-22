@@ -120,8 +120,8 @@ class _SignInState extends State<SignIn> {
                         .set({
                       'uid': userCredential.user!.uid,
                       'phoneNumber': userCredential.user!.phoneNumber,
-                      'displayName': userCredential.user!.displayName,
-                      'photoURL': userCredential.user!.photoURL,
+                      'displayName':
+                          userCredential.user!.displayName ?? 'Anonim',
                       'email': userCredential.user!.email,
                       'creationTime':
                           userCredential.user!.metadata.creationTime,
@@ -185,7 +185,7 @@ class _SignInState extends State<SignIn> {
         spaceBetweenSelectorAndTextField: 0,
         keyboardType:
             const TextInputType.numberWithOptions(signed: true, decimal: true),
-        inputBorder: OutlineInputBorder(
+        inputBorder: const OutlineInputBorder(
           borderSide: BorderSide.none,
         ),
         onSaved: (PhoneNumber number) {

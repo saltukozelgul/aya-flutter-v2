@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:aya_flutter_v2/extensions/strings.dart';
 import 'package:aya_flutter_v2/screens/models/listings_model.dart';
 import 'package:aya_flutter_v2/services/listings_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -23,11 +24,9 @@ class _ListingState extends State<Listing> {
   void initState() {
     super.initState();
 
-    _service.getListingById(widget.id).then((value) {
+    _service.getListingById(widget.id).then((value) async {
+      _listingsModel = await ListingsModel.fromMap(value);
       setState(() {
-        // If we want to use user.
-        // var user = value['user'].get().then((value) => print(value.data()));
-        _listingsModel = ListingsModel.fromMap(value);
         isLoaded = true;
       });
     });
@@ -46,26 +45,25 @@ class _ListingState extends State<Listing> {
           ? _Ilan(
               context,
               _listingsModel!.ownerUsername,
-              "Tarih",
+              _listingsModel!.creationTime.toString().trFormattedDate(),
               _listingsModel!.description,
               _listingsModel!.location,
               _listingsModel!.coordinates.latitude,
               _listingsModel!.coordinates.longitude,
-              ["wp", "telegram"],
               0)
           : const Center(child: CircularProgressIndicator()),
     );
   }
 
   Column _Ilan(BuildContext context, String user, String date, String desc,
-          String loc, double lat, double lng, iletisim, int index) =>
+          String loc, double lat, double lng, int index) =>
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _ilanUsername(context, user, date),
           _ilanDesc(desc, context),
-          _ilanCom(context, iletisim),
+          _ilanCom(context),
           _ilanLocationAndTags(loc, context),
           _ilanMap(context, lat, lng),
         ],
@@ -149,7 +147,7 @@ class _ListingState extends State<Listing> {
     );
   }
 
-  Padding _ilanCom(BuildContext context, iletisim) {
+  Padding _ilanCom(BuildContext context) {
     return Padding(
       //ilan sahibi kısmı
       padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15),
