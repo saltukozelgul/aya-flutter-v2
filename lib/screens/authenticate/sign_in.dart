@@ -1,4 +1,5 @@
 import 'package:aya_flutter_v2/constants/colors.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
@@ -109,7 +110,24 @@ class _SignInState extends State<SignIn> {
                     );
 
                     // Sign the user in (or link) with the credential
-                    await _auth.signInWithCredential(credential);
+                    var userCredential =
+                        await _auth.signInWithCredential(credential);
+
+                    // Create user in firestore if there isn't
+                    await FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(userCredential.user!.uid)
+                        .set({
+                      'uid': userCredential.user!.uid,
+                      'phoneNumber': userCredential.user!.phoneNumber,
+                      'displayName': userCredential.user!.displayName,
+                      'photoURL': userCredential.user!.photoURL,
+                      'email': userCredential.user!.email,
+                      'creationTime':
+                          userCredential.user!.metadata.creationTime,
+                      'lastSignInTime':
+                          userCredential.user!.metadata.lastSignInTime,
+                    });
 
                     // close the dialog
                     Navigator.of(context).pop();

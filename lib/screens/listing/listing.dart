@@ -25,6 +25,8 @@ class _ListingState extends State<Listing> {
 
     _service.getListingById(widget.id).then((value) {
       setState(() {
+        // If we want to use user.
+        // var user = value['user'].get().then((value) => print(value.data()));
         _listingsModel = ListingsModel.fromMap(value);
         isLoaded = true;
       });
