@@ -114,20 +114,38 @@ class _SignInState extends State<SignIn> {
                         await _auth.signInWithCredential(credential);
 
                     // Create user in firestore if there isn't
-                    await FirebaseFirestore.instance
+                    bool isUser = await FirebaseFirestore.instance
                         .collection('users')
                         .doc(userCredential.user!.uid)
-                        .set({
-                      'uid': userCredential.user!.uid,
-                      'phoneNumber': userCredential.user!.phoneNumber,
-                      'displayName':
-                          userCredential.user!.displayName ?? 'Anonim',
-                      'email': userCredential.user!.email,
-                      'creationTime':
-                          userCredential.user!.metadata.creationTime,
-                      'lastSignInTime':
-                          userCredential.user!.metadata.lastSignInTime,
-                    });
+                        .get()
+                        .then((value) => value.exists);
+
+                    if (!isUser) {
+                      await FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(userCredential.user!.uid)
+                          .set({
+                        'uid': userCredential.user!.uid,
+                        'phoneNumber': userCredential.user!.phoneNumber,
+                        'location': '',
+                        'favourites': [],
+                        'displayName':
+                            userCredential.user!.displayName ?? 'Anonim',
+                        'email': userCredential.user!.email,
+                        'creationTime':
+                            userCredential.user!.metadata.creationTime,
+                        'lastSignInTime':
+                            userCredential.user!.metadata.lastSignInTime,
+                      });
+                    } else {
+                      await FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(userCredential.user!.uid)
+                          .update({
+                        'lastSignInTime':
+                            userCredential.user!.metadata.lastSignInTime,
+                      });
+                    }
 
                     // close the dialog
                     Navigator.of(context).pop();

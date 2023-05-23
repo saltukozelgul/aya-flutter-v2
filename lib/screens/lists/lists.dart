@@ -37,7 +37,6 @@ class _ListPageState extends State<ListPage> {
         .then((value) {
       setState(() {
         documents = value.docs;
-        print(documents);
       });
     });
   }

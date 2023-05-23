@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:math';
 import 'package:aya_flutter_v2/extensions/strings.dart';
 import 'package:aya_flutter_v2/screens/models/listings_model.dart';
 import 'package:aya_flutter_v2/services/listings_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:map/map.dart';
 import '../../constants/colors.dart';
@@ -28,8 +30,30 @@ class _ListingState extends State<Listing> {
 
     _service.getListingById(widget.id).then((value) async {
       _listingsModel = await ListingsModel.fromMap(value);
-      setState(() {
-        isLoaded = true;
+      // get userRef from firestore
+      DocumentReference userRef = FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid);
+
+      // get listingRef from firestore
+      DocumentReference listingRef =
+          FirebaseFirestore.instance.collection('listings').doc(widget.id);
+
+      // check if listing is in user's favourites
+      userRef.get().then((value) {
+        // Convert the DocumentSnapshot to a Map<String, dynamic>
+        var valueMap = value.data()!.toString();
+        if (valueMap.contains(listingRef.id)) {
+          setState(() {
+            isFavorite = true;
+            isLoaded = true;
+          });
+        } else {
+          setState(() {
+            isFavorite = false;
+            isLoaded = true;
+          });
+        }
       });
     });
   }
@@ -47,6 +71,29 @@ class _ListingState extends State<Listing> {
             onPressed: () {
               setState(() {
                 isFavorite = !isFavorite;
+
+                // Add user's favourites field to listing reference
+                DocumentReference docRef = FirebaseFirestore.instance
+                    .collection('listings')
+                    .doc(widget.id);
+
+                // Add listing reference to user's favourites field
+                DocumentReference userRef = FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(FirebaseAuth.instance.currentUser!.uid);
+
+                // If the listing is already in the user's favourites, remove it
+                if (!isFavorite) {
+                  print('removing');
+                  userRef.update({
+                    'favourites': FieldValue.arrayRemove([docRef])
+                  });
+                } else {
+                  print('adding');
+                  userRef.update({
+                    'favourites': FieldValue.arrayUnion([docRef])
+                  });
+                }
               });
             },
             icon: Icon(
