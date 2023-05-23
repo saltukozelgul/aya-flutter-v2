@@ -1,7 +1,10 @@
 import 'package:aya_flutter_v2/constants/colors.dart';
+import 'package:aya_flutter_v2/extensions/strings.dart';
+import 'package:aya_flutter_v2/screens/profile/edit_profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../listing/listing.dart';
 
@@ -15,6 +18,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   Map<String, dynamic>? _userMap;
   final List<dynamic> _favourites = [];
+  List<dynamic> _contactMethods = [];
   bool isLoaded = false;
 
   @override
@@ -29,6 +33,15 @@ class _ProfilePageState extends State<ProfilePage> {
         .then((value) {
       _userMap = value.data();
       isLoaded = true;
+      _contactMethods = _userMap?['contactMethods'].map((e) {
+        if (e == 'telefon') {
+          return ['Telefon', Icons.phone];
+        } else if (e == 'whatsapp') {
+          return ['Whatsapp', FontAwesomeIcons.whatsapp];
+        } else {
+          return ['Telegram', FontAwesomeIcons.telegram];
+        }
+      }).toList();
       // For each DocumentReference in the user's "favorites" list, fetch the referenced document and return the list
       if (_userMap?['favourites'].isEmpty) {
         setState(() {});
@@ -48,10 +61,28 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        heroTag: "editProfile",
+        backgroundColor: AppColors.white,
+        elevation: 10,
+        mini: true,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EditProfilePage(),
+            ),
+          );
+        },
+        child: const Icon(Icons.edit, color: AppColors.primary),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       backgroundColor: Colors.brown[50],
       body: isLoaded
-          ? _buildProfile(context, _userMap?['displayName'],
-              _userMap?['phoneNumber'], _userMap?['location'])
+          ? SingleChildScrollView(
+              child: _buildProfile(context, _userMap?['displayName'],
+                  _userMap?['phoneNumber'], _userMap?['location']),
+            )
           : const Center(child: CircularProgressIndicator()),
     );
   }
@@ -65,10 +96,50 @@ class _ProfilePageState extends State<ProfilePage> {
           _userName(context, user),
           _userCom(context, phone),
           _userLoc(context, loc),
-          _favTitleAndDivider(context),
+          _favTitleAndDivider(context, "Favoriler", Icons.favorite),
           _favList(context),
+          _favTitleAndDivider(context, "İletişim Yöntemlerim", Icons.phone),
+          _contactMethodsGrid(),
         ],
       );
+
+  GridView _contactMethodsGrid() {
+    return GridView.builder(
+      shrinkWrap: true,
+      itemCount: _contactMethods.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        childAspectRatio: 3,
+      ),
+      itemBuilder: (BuildContext context, int index) {
+        return Container(
+          margin: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            color: AppColors.primary,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Icon(
+                _contactMethods[index][1],
+                color: AppColors.white,
+                size: 20,
+              ),
+              Text(
+                _contactMethods[index][0],
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.white,
+                    ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   Padding _avatar(BuildContext context) {
     return const Padding(
@@ -203,17 +274,17 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Row _favTitleAndDivider(BuildContext context) {
+  Row _favTitleAndDivider(BuildContext context, String text, IconData icon) {
     return Row(
       children: [
-        const Padding(
-          padding: EdgeInsets.only(top: 15, left: 15),
-          child: Icon(Icons.favorite, color: AppColors.primary, size: 30),
+        Padding(
+          padding: const EdgeInsets.only(top: 15, left: 15),
+          child: Icon(icon, color: AppColors.primary, size: 30),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 15, left: 15),
           child: Text(
-            "Favoriler",
+            text,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontSize: 18,
                   color: AppColors.disable,

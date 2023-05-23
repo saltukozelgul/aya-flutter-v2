@@ -129,6 +129,8 @@ class _SignInState extends State<SignIn> {
                         'phoneNumber': userCredential.user!.phoneNumber,
                         'location': '',
                         'favourites': [],
+                        'telegramUsername': '',
+                        'contactMethods': [],
                         'displayName':
                             userCredential.user!.displayName ?? 'Anonim',
                         'email': userCredential.user!.email,

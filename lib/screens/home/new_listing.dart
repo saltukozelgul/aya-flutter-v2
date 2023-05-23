@@ -40,6 +40,7 @@ class _NewListingState extends State<NewListing> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.brown[50],
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Yeni İlan'),
@@ -99,6 +100,7 @@ class _NewListingState extends State<NewListing> {
       ),
       // Save button
       floatingActionButton: FloatingActionButton.extended(
+        heroTag: "addBtn",
         onPressed: () {
           // if markerpoint is zero
           if (markerPoint.latitude == 0 || markerPoint.longitude == 0) {

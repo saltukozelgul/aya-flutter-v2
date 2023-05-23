@@ -14,8 +14,8 @@ import 'package:map/map.dart';
 import 'package:latlng/latlng.dart';
 
 class Home extends StatefulWidget {
-  Home({Key? key}) : super(key: key);
-
+  Home({Key? key, required this.startingIndex}) : super(key: key);
+  final int startingIndex;
   @override
   State<Home> createState() => _HomeState();
 }
@@ -30,6 +30,12 @@ class _HomeState extends State<Home> {
   late List<DocumentSnapshot> documents = [];
   late List<DocumentSnapshot> filteredDocuments = [];
   TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.startingIndex;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -236,6 +242,7 @@ class _HomeState extends State<Home> {
           ),
         ),
         floatingActionButton: FloatingActionButton(
+          heroTag: "addBtn",
           onPressed: () => Navigator.push(
               context, MaterialPageRoute(builder: (context) => NewListing())),
           backgroundColor: AppColors.primary,
