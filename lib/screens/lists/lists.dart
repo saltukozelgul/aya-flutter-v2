@@ -172,22 +172,20 @@ class _ListPageState extends State<ListPage> {
   Row _ilanUsername(String user, String date, BuildContext context) {
     return Row(
       children: [
-        Expanded(
-          child: Row(children: [
-            const Padding(
-                padding: EdgeInsets.only(top: 15, left: 15),
-                child: Icon(Icons.person, color: AppColors.primary, size: 25)),
-            Padding(
-              padding: const EdgeInsets.only(top: 15, left: 15),
-              child: Text(user,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontSize: 18,
-                        color: AppColors.disable,
-                        fontWeight: FontWeight.bold,
-                      )),
-            ),
-          ]),
-        ),
+        Row(children: [
+          const Padding(
+              padding: EdgeInsets.only(top: 15, left: 15),
+              child: Icon(Icons.person, color: AppColors.primary, size: 25)),
+          Padding(
+            padding: const EdgeInsets.only(top: 15, left: 15),
+            child: Text(user,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontSize: 18,
+                      color: AppColors.disable,
+                      fontWeight: FontWeight.bold,
+                    )),
+          ),
+        ]),
         Expanded(
           child: Align(
             alignment: Alignment.topRight,

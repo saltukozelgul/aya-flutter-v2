@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:aya_flutter_v2/constants/colors.dart';
 import 'package:aya_flutter_v2/extensions/strings.dart';
 import 'package:aya_flutter_v2/screens/profile/edit_profile.dart';
+import 'package:aya_flutter_v2/widgets/static_map.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -254,10 +257,7 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Column(
         children: [
           Expanded(
-            child: Image.network(
-              'https://www.google.com/maps/vt/pb=!1m4!1m3!1i14!2i$lat!3i$long!2m3!1e0!2sm!3i420120488!3m7!2sen!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0!5m1!1e0!23i4111425',
-              fit: BoxFit.contain,
-            ),
+            child: StaticMap(latitude: lat, longitude: long, zoom: 14),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),

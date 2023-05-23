@@ -12,6 +12,7 @@ class ListingsModel {
   final String description;
   final DateTime creationTime;
   final UserModel user;
+  final List<dynamic> tags;
 
   ListingsModel(
       {required this.location,
@@ -19,13 +20,14 @@ class ListingsModel {
       required this.ownerUsername,
       required this.description,
       required this.creationTime,
-      required this.user});
+      required this.user,
+      required this.tags});
 
   static Future<ListingsModel> fromMap(Map<String, dynamic> data) async {
     var user = await data['user'].get();
     var userMap = await user.data();
-    print(userMap);
     return ListingsModel(
+        tags: data['tags'],
         location: data['location'],
         coordinates: data['coordinates'],
         ownerUsername: data['ownerUsername'],

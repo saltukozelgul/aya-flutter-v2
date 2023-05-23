@@ -5,6 +5,7 @@ class UserModel {
   final DateTime lastSignInTime;
   final String phoneNumber;
   final String uid;
+  final List<dynamic> contactMethods;
 
   UserModel(
       {required this.displayName,
@@ -12,10 +13,12 @@ class UserModel {
       required this.creationTime,
       required this.lastSignInTime,
       required this.phoneNumber,
-      required this.uid});
+      required this.uid,
+      required this.contactMethods});
 
   factory UserModel.fromMap(Map<String, dynamic> data) {
     return UserModel(
+        contactMethods: data['contactMethods'],
         displayName: data['displayName'],
         email: data['email'],
         creationTime: data['creationTime'].toDate(),
