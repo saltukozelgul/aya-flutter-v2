@@ -341,14 +341,14 @@ class _HomeState extends State<Home> {
             height: 30,
             width: 150,
             child: ListView.builder(
+              itemCount: filteredDocuments[ilanIndex]["tags"].length < 2
+                  ? filteredDocuments[ilanIndex]["tags"].length
+                  : 2,
               itemBuilder: (context, index) => _ilanTag(
                   context,
                   filteredDocuments[ilanIndex]["tags"][index]
                       .toString()
                       .capitalizeFirstChar()),
-              itemCount: filteredDocuments[ilanIndex]["tags"].length < 2
-                  ? filteredDocuments[ilanIndex]["tags"].length
-                  : 2,
               scrollDirection: Axis.horizontal,
             ),
           ),
@@ -412,7 +412,6 @@ class _HomeState extends State<Home> {
   }
 
   Container _ilanTag(BuildContext context, String index) {
-    print(filteredDocuments[2]["tags"]);
     return Container(
       //tagler için ayarlar
       decoration: BoxDecoration(

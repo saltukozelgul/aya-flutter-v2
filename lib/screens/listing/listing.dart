@@ -14,7 +14,7 @@ import 'package:latlng/latlng.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Listing extends StatefulWidget {
-  Listing({Key? key, required this.id}) : super(key: key);
+  const Listing({Key? key, required this.id}) : super(key: key);
   final String id;
   @override
   _ListingState createState() => _ListingState();
@@ -25,7 +25,7 @@ class _ListingState extends State<Listing> {
   bool isLoaded = false;
   bool isFavorite = false;
   List<dynamic> _contactMethods = [];
-  ListingsService _service = ListingsService();
+  final ListingsService _service = ListingsService();
 
   @override
   void initState() {
@@ -394,18 +394,4 @@ class _ListingState extends State<Listing> {
   }
 }
 
-class _Strings {
-  static const List<String> tagler = [
-    //geçici olarak eklediğimiz tagler
-    "barınma",
-    "ısınma",
-    "bebek",
-    "giyim",
-    "diger",
-    "barınma",
-    "ısınma",
-    "bebek",
-    "giyim",
-    "diger"
-  ];
-}
+class _Strings {}

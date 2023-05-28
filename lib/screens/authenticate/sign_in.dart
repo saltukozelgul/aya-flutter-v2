@@ -30,12 +30,16 @@ class _SignInState extends State<SignIn> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 25.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Container(
-              color: AppColors.primary,
-              height: 250,
-              child: Center(child: Text("Buraya Logo gelcek")),
+              color: Colors.transparent,
+              height: 350,
+              child: Center(
+                  child: Image.asset(
+                "assets/images/logo-black.png",
+                fit: BoxFit.fill,
+              )),
             ),
             _phoneInput(),
             _signInButton(context),

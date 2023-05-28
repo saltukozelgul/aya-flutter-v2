@@ -54,7 +54,6 @@ class _ProfilePageState extends State<ProfilePage> {
         fav.get().then((value) {
           setState(() {
             _favourites.add([value.data(), value.id]);
-            print(_favourites);
           });
         });
       });

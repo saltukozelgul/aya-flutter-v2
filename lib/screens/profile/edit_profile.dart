@@ -40,7 +40,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
       if (value.exists) {
         setState(() {
           userData = value.data() as Map<String, dynamic>;
-          print(userData);
           _nameController.text = userData?['displayName'];
           _phoneController.text = userData?['phoneNumber'];
           _emailController.text = userData?['email'] ?? '';

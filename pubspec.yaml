@@ -44,6 +44,16 @@ dependencies:
   cloud_firestore: ^4.7.1
   font_awesome_flutter: ^10.4.0
   url_launcher: ^6.1.11
+  flutter_native_splash: ^2.3.0
+
+flutter_native_splash:
+  color: "#9E8FB2"
+  image: assets/splash.png
+  android: true
+  ios: true
+  android_12:
+    background_color: "#9E8FB2"
+    image: assets/splash.png
 
 dev_dependencies:
   flutter_test:
@@ -75,6 +85,9 @@ flutter:
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
+
+  assets:
+    - assets/images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
