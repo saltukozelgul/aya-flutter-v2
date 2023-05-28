@@ -360,7 +360,7 @@ class _ListingState extends State<Listing> {
     return InkWell(
       onTap: () async {
         if (await canLaunchUrl(_onTapLaunchUrl)) {
-          launchUrl(_onTapLaunchUrl);
+          launchUrl(_onTapLaunchUrl, mode: LaunchMode.externalApplication);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
