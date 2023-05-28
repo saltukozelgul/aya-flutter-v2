@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:map/map.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../constants/colors.dart';
 import 'package:latlng/latlng.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -349,24 +350,46 @@ class _ListingState extends State<Listing> {
       );
 
   _ilanComButton(BuildContext context, e) {
-    print(e);
+    var onTapLaunchUrlString = e[0] == 'Whatsapp'
+        ? 'https://wa.me/${_listingsModel!.user.phoneNumber}'
+        : e[0] == 'Telefon'
+            ? 'tel:${_listingsModel!.user.phoneNumber}'
+            : 'https://t.me/${_listingsModel!.user.telegramUsername}';
+    Uri _onTapLaunchUrl = Uri.parse(onTapLaunchUrlString);
     // CREATE A ROW E FIRST INDEX IS TEXT SECOND ONE IS ICONDATA
-    return Container(
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20), color: AppColors.primary),
-      margin: const EdgeInsets.only(right: 7),
-      padding: const EdgeInsets.all(7),
-      child: Row(children: [
-        Padding(
-          padding: const EdgeInsets.only(right: 3.0),
-          child: Icon(e[1], color: AppColors.white),
-        ),
-        Text(e[0],
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium
-                ?.copyWith(fontSize: 18, color: AppColors.white)),
-      ]),
+    return InkWell(
+      onTap: () async {
+        if (await canLaunchUrl(_onTapLaunchUrl)) {
+          launchUrl(_onTapLaunchUrl);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              backgroundColor: AppColors.primary,
+              content: Text(
+                "Bir hata oluştu.",
+                style: TextStyle(color: AppColors.white, fontSize: 16),
+              ),
+            ),
+          );
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20), color: AppColors.primary),
+        margin: const EdgeInsets.only(right: 7),
+        padding: const EdgeInsets.all(7),
+        child: Row(children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 3.0),
+            child: Icon(e[1], color: AppColors.white),
+          ),
+          Text(e[0],
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(fontSize: 18, color: AppColors.white)),
+        ]),
+      ),
     );
   }
 }

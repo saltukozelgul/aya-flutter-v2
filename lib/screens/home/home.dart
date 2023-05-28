@@ -276,7 +276,7 @@ class _HomeState extends State<Home> {
               children: [
                 _ilanUsername(user, date, context),
                 _ilanDesc(desc, context),
-                _ilanLocationAndTags(loc, context),
+                _ilanLocationAndTags(loc, context, index),
                 _ilanMap(context, lat, lng),
               ],
             ),
@@ -329,7 +329,8 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Padding _ilanLocationAndTags(String loc, BuildContext context) {
+  Padding _ilanLocationAndTags(
+      String loc, BuildContext context, int ilanIndex) {
     return Padding(
       //tag ve konum kısmı
       padding: const EdgeInsets.only(left: 15.0, right: 15, top: 5),
@@ -340,9 +341,14 @@ class _HomeState extends State<Home> {
             height: 30,
             width: 150,
             child: ListView.builder(
-              itemBuilder: (context, index) =>
-                  _ilanTag(context, _Strings.tagler[index]),
-              itemCount: 2,
+              itemBuilder: (context, index) => _ilanTag(
+                  context,
+                  filteredDocuments[ilanIndex]["tags"][index]
+                      .toString()
+                      .capitalizeFirstChar()),
+              itemCount: filteredDocuments[ilanIndex]["tags"].length < 2
+                  ? filteredDocuments[ilanIndex]["tags"].length
+                  : 2,
               scrollDirection: Axis.horizontal,
             ),
           ),
@@ -405,20 +411,23 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Container _ilanTag(BuildContext context, String index) => Container(
-        //tagler için ayarlar
-        decoration: BoxDecoration(
-          color: AppColors.primary,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        padding: const EdgeInsets.all(7),
-        margin: const EdgeInsets.only(right: 8),
-        child: Text(index.toString(),
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium
-                ?.copyWith(fontSize: 14, color: AppColors.white)),
-      );
+  Container _ilanTag(BuildContext context, String index) {
+    print(filteredDocuments[2]["tags"]);
+    return Container(
+      //tagler için ayarlar
+      decoration: BoxDecoration(
+        color: AppColors.primary,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      padding: const EdgeInsets.all(7),
+      margin: const EdgeInsets.only(right: 8),
+      child: Text(index.toString(),
+          style: Theme.of(context)
+              .textTheme
+              .bodyMedium
+              ?.copyWith(fontSize: 14, color: AppColors.white)),
+    );
+  }
 }
 
 class _Strings {
