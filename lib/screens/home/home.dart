@@ -21,6 +21,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  String selectedTag = 'Tümü';
   final AuthService _auth = AuthService();
   int _currentIndex = 0;
   bool firstTime = false;
@@ -57,19 +58,33 @@ class _HomeState extends State<Home> {
           }
           // Data from Firestore is available
           documents = snapshot.data!.docs;
+          // First time we load the data, we save it in filteredDocuments
           if (!firstTime) {
             filteredDocuments = documents;
             firstTime = true;
           }
+          // If the search bar is empty, we return all documents
           if (_searchController.text.isEmpty) {
-            filteredDocuments = documents;
-          } else {
+            // If the selected tag is not "All", we filter the documents
+            if (selectedTag != 'Tümü') {
+              filteredDocuments = documents
+                  .where((element) =>
+                      element.get('tags').contains(selectedTag.toLowerCase()))
+                  .toList();
+            } else {
+              filteredDocuments = documents;
+            }
+          }
+          // If the search bar is not empty, we filter the documents
+          if (_searchController.text.isNotEmpty) {
+            // Check text and tags
             filteredDocuments = documents
-                .where((element) => element
-                    .get('description')
-                    .toString()
-                    .toLowerCase()
-                    .contains(_searchController.text.toLowerCase()))
+                .where((element) =>
+                    element
+                        .get('description')
+                        .toLowerCase()
+                        .contains(_searchController.text.toLowerCase()) &&
+                    element.get('tags').contains(selectedTag.toLowerCase()))
                 .toList();
           }
           return NestedScrollView(
@@ -192,6 +207,11 @@ class _HomeState extends State<Home> {
                 child: DefaultTabController(
                   length: _Strings.tagler.length,
                   child: TabBar(
+                    onTap: (index) {
+                      setState(() {
+                        selectedTag = _Strings.tagler[index];
+                      });
+                    },
                     isScrollable: true,
                     indicatorColor: AppColors.primary,
                     labelColor: AppColors.primary,
@@ -432,15 +452,11 @@ class _HomeState extends State<Home> {
 class _Strings {
   static const List<String> tagler = [
     //geçici olarak eklediğimiz tagler
-    "barınma",
-    "ısınma",
-    "bebek",
-    "giyim",
-    "diger",
-    "barınma",
-    "ısınma",
-    "bebek",
-    "giyim",
-    "diger"
+    "Tümü",
+    "Barıma",
+    "Yemek",
+    "Kıyafet",
+    "İlaç",
+    "Sağlık"
   ];
 }

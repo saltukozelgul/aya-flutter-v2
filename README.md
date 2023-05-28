@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <img src="link" alt="Proje Logo" width="200" height="200">
+  <img src="assets/preview/banner.png" alt="Proje Logo" width="200" height="200">
 </p>
 
 <p align="center">
@@ -23,11 +23,9 @@
 ## Ekran Görüntüleri
 
 <p align="center">
-  <img src="link" alt="Proje" width="200" height="200">
-  <img src="link" alt="Proje" width="200" height="200">
-  <img src="link" alt="Proje" width="200" height="200">
-  
-  (biri demo gifi olabilir, daha tatlı olur bence)
+  <img src="assets/preview/homepage.jpeg" alt="Proje" width="200" height="200">
+  <img src="assets/preview/edit_profile.jpeg" alt="Proje" width="200" height="200">
+  <img src="assets/preview/profile.jpeg" alt="Proje" width="200" height="200">
 </p>
 
 
