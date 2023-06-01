@@ -94,7 +94,7 @@ class _ProfilePageState extends State<ProfilePage> {
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _avatar(context),
+          _avatar(context, user),
           _userName(context, user),
           _userCom(context, phone),
           _userLoc(context, loc),
@@ -143,16 +143,16 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Padding _avatar(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.only(top: 20.0),
+  Padding _avatar(BuildContext context, String user) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20.0),
       child: Center(
         child: CircleAvatar(
           radius: 50,
           backgroundColor: AppColors.primary,
           child: Text(
-            "S",
-            style: TextStyle(fontSize: 40),
+            user[0].toUpperCase(),
+            style: const TextStyle(fontSize: 40),
           ),
         ),
       ),
